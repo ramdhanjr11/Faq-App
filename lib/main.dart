@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
-          primarySwatch: Colors.blue,
+          colorSchemeSeed: Colors.green,
         ),
         initialRoute: AppRoutes.loginRouteName,
         routes: {
