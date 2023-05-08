@@ -1,4 +1,7 @@
+import 'package:faq_app/common/routes.dart';
+import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
@@ -11,7 +14,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormBuilderState>();
-  bool _isVisible = false;
+  bool _isVisible = true;
+  bool _isLoading = false;
 
   void _setPasswordVisible() {
     setState(() {
@@ -100,16 +104,59 @@ class _LoginPageState extends State<LoginPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.saveAndValidate()) {
-                        print(_formKey.currentState!.value);
+                        _processLogin(_formKey.currentState!.value);
                       }
                     },
-                    child: const Text('Login'),
+                    child: BlocListener<AuthCubit, AuthState>(
+                      listener: (context, state) {
+                        if (state is LoginLoading) {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                        }
+                        if (state is LoginError) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          _showSnackbar(state.message);
+                        }
+                        if (state is LoginSuccess) {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                          _showSnackbar('Login Successfuly');
+                          Navigator.pushReplacementNamed(
+                            context,
+                            AppRoutes.homeRouteName,
+                          );
+                        }
+                      },
+                      child: Visibility(
+                        visible: _isLoading,
+                        replacement: const Text('Login'),
+                        child: const CircularProgressIndicator(),
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  _processLogin(Map<String, dynamic> valueForm) {
+    final email = valueForm['email'];
+    final password = valueForm['password'];
+    context.read<AuthCubit>().login(email, password);
+  }
+
+  _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
       ),
     );
   }
