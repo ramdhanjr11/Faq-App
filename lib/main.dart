@@ -1,5 +1,6 @@
 import 'package:faq_app/common/routes.dart';
 import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
+import 'package:faq_app/presentation/cubits/faq_cubit/faq_cubit.dart';
 import 'package:faq_app/presentation/ui/home_page.dart';
 import 'package:faq_app/presentation/ui/login_page.dart';
 import 'package:flutter/material.dart';
@@ -22,9 +23,13 @@ class MyApp extends StatelessWidget {
         BlocProvider<AuthCubit>(
           create: (context) => di.locator(),
         ),
+        BlocProvider<FaqCubit>(
+          create: (context) => di.locator(),
+        ),
       ],
       child: MaterialApp(
         title: 'Faq App',
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,
           primarySwatch: Colors.blue,

@@ -1,6 +1,8 @@
 import 'package:faq_app/common/routes.dart';
+import 'package:faq_app/domain/entities/faq.dart';
 import 'package:faq_app/domain/entities/user.dart';
 import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
+import 'package:faq_app/presentation/cubits/faq_cubit/faq_cubit.dart';
 import 'package:faq_app/utils/show_snackbar_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,12 +16,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late User user;
+  late List<Faq> faqs;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     user = context.read<AuthCubit>().user!;
+    context.read<FaqCubit>().getFaqs(user.tokenType, user.accessToken);
   }
 
   _setLoadingState(bool isLoading) {
@@ -72,39 +76,101 @@ class _HomePageState extends State<HomePage> {
             );
           }
 
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 25,
-                        backgroundImage: NetworkImage(user.pathPhoto),
-                      ),
-                      const SizedBox(width: 12),
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: 'Welcome, ',
-                            ),
-                            TextSpan(
-                              text: user.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                ],
+          return BlocBuilder<FaqCubit, FaqState>(
+            builder: (context, state) {
+              if (state is FaqsLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if (state is FaqsError) {
+                return Center(
+                  child: Text(state.message),
+                );
+              }
+
+              if (state is FaqsSuccess) {
+                faqs = state.faqs;
+                return _buildFaqsList();
+              }
+
+              return Container();
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          showSnackbar('Coming soon feature', context);
+        },
+        label: Row(
+          children: const [
+            Icon(Icons.add),
+            SizedBox(width: 6),
+            Text('Add Question'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Padding _buildFaqsList() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return _userInfoWidget();
+          }
+          final faq = faqs[index - 1];
+          return Card(
+            margin: const EdgeInsets.all(8),
+            child: ListTile(
+              title: const Text('Pertanyaan'),
+              subtitle: Text(faq.question),
+              leading: const SizedBox(
+                height: double.infinity,
+                child: Icon(Icons.question_mark_outlined),
               ),
+              contentPadding: const EdgeInsets.all(8),
             ),
           );
         },
+        itemCount: faqs.length + 1,
+      ),
+    );
+  }
+
+  Padding _userInfoWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 25,
+                backgroundImage: NetworkImage(user.pathPhoto),
+              ),
+              const SizedBox(width: 12),
+              Text.rich(
+                TextSpan(
+                  children: [
+                    const TextSpan(
+                      text: 'Welcome, ',
+                    ),
+                    TextSpan(
+                      text: user.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }

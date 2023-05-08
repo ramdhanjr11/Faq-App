@@ -1,4 +1,5 @@
 import 'package:faq_app/data/datasources/faq_remote_data_source.dart';
+import 'package:faq_app/domain/entities/faq.dart';
 import 'package:faq_app/domain/entities/user.dart';
 import 'package:faq_app/common/failures.dart';
 import 'package:dartz/dartz.dart';
@@ -24,6 +25,17 @@ class FaqRepositoryImpl implements FaqRepository {
     try {
       final result = await remoteDataSource.logout(tokenType, token);
       return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<Faq>>> getFaqs(
+      String tokenType, String token) async {
+    try {
+      final result = await remoteDataSource.getFaqs(tokenType, token);
+      return Right(result.map((faq) => faq.toEntity()).toList());
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }
