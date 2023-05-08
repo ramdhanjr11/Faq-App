@@ -22,3 +22,17 @@ class LoginError extends AuthState {
 
   const LoginError({required this.message});
 }
+
+class LogoutLoading extends AuthState {}
+
+class LogoutSuccess extends AuthState {
+  final String message;
+
+  const LogoutSuccess({required this.message});
+}
+
+class LogoutError extends AuthState {
+  final String message;
+
+  const LogoutError({required this.message});
+}

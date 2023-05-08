@@ -3,6 +3,7 @@ import 'package:faq_app/data/datasources/faq_remote_data_source.dart';
 import 'package:faq_app/data/repository/faq_repository_impl.dart';
 import 'package:faq_app/domain/repositories/faq_repository.dart';
 import 'package:faq_app/domain/usecases/login_usecase.dart';
+import 'package:faq_app/domain/usecases/logout_usecase.dart';
 import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:get_it/get_it.dart';
 
@@ -30,9 +31,16 @@ void init() {
     ),
   );
 
+  locator.registerLazySingleton(
+    () => LogoutUseCase(
+      repository: locator(),
+    ),
+  );
+
   // cubits
   locator.registerFactory(
     () => AuthCubit(
+      locator(),
       locator(),
     ),
   );

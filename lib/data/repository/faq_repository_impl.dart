@@ -18,4 +18,14 @@ class FaqRepositoryImpl implements FaqRepository {
       return Left(ServerFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, String>> logout(String tokenType, String token) async {
+    try {
+      final result = await remoteDataSource.logout(tokenType, token);
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
 }
