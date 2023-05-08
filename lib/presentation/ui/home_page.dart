@@ -14,15 +14,24 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with RouteAware {
   late User user;
   late List<Faq> faqs;
   bool _isLoading = false;
 
   @override
   void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      AppRoutes.routeObserver.subscribe(this, ModalRoute.of(context)!);
+    });
     super.initState();
     user = context.read<AuthCubit>().user!;
+    context.read<FaqCubit>().getFaqs(user.tokenType, user.accessToken);
+  }
+
+  @override
+  void didPopNext() {
+    super.didPopNext();
     context.read<FaqCubit>().getFaqs(user.tokenType, user.accessToken);
   }
 
@@ -117,7 +126,7 @@ class _HomePageState extends State<HomePage> {
 
   Padding _buildFaqsList() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(6),
       child: ListView.builder(
         itemBuilder: (context, index) {
           if (index == 0) {
@@ -134,6 +143,13 @@ class _HomePageState extends State<HomePage> {
                 child: Icon(Icons.question_mark_outlined),
               ),
               contentPadding: const EdgeInsets.all(8),
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  AppRoutes.detailRouteName,
+                  arguments: faq,
+                );
+              },
             ),
           );
         },

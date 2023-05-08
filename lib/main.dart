@@ -1,6 +1,7 @@
 import 'package:faq_app/common/routes.dart';
 import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:faq_app/presentation/cubits/faq_cubit/faq_cubit.dart';
+import 'package:faq_app/presentation/ui/detail_page.dart';
 import 'package:faq_app/presentation/ui/home_page.dart';
 import 'package:faq_app/presentation/ui/login_page.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +36,11 @@ class MyApp extends StatelessWidget {
           colorSchemeSeed: Colors.green,
         ),
         initialRoute: AppRoutes.loginRouteName,
+        navigatorObservers: [AppRoutes.routeObserver],
         routes: {
           AppRoutes.loginRouteName: (context) => const LoginPage(),
           AppRoutes.homeRouteName: (context) => const HomePage(),
+          AppRoutes.detailRouteName: (context) => const DetailPage(),
         },
       ),
     );
