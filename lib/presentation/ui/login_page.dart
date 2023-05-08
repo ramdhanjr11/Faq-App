@@ -1,5 +1,6 @@
 import 'package:faq_app/common/routes.dart';
 import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
+import 'package:faq_app/utils/show_snackbar_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -20,6 +21,12 @@ class _LoginPageState extends State<LoginPage> {
   void _setPasswordVisible() {
     setState(() {
       _isVisible = !_isVisible;
+    });
+  }
+
+  _setLoadingState(bool isLoading) {
+    setState(() {
+      _isLoading = isLoading;
     });
   }
 
@@ -110,21 +117,15 @@ class _LoginPageState extends State<LoginPage> {
                     child: BlocListener<AuthCubit, AuthState>(
                       listener: (context, state) {
                         if (state is LoginLoading) {
-                          setState(() {
-                            _isLoading = true;
-                          });
+                          _setLoadingState(true);
                         }
                         if (state is LoginError) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          _showSnackbar(state.message);
+                          _setLoadingState(false);
+                          showSnackbar(state.message, context);
                         }
                         if (state is LoginSuccess) {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                          _showSnackbar('Login Successfuly');
+                          _setLoadingState(false);
+                          showSnackbar('Login Successfuly', context);
                           Navigator.pushReplacementNamed(
                             context,
                             AppRoutes.homeRouteName,
@@ -151,13 +152,5 @@ class _LoginPageState extends State<LoginPage> {
     final email = valueForm['email'];
     final password = valueForm['password'];
     context.read<AuthCubit>().login(email, password);
-  }
-
-  _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
   }
 }
