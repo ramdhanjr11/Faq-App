@@ -42,13 +42,28 @@ class UserModel extends Equatable {
     );
   }
 
+  factory UserModel.fromEntity(User user) {
+    return UserModel(
+      id: user.id,
+      name: user.name,
+      jenisUser: user.jenisUser,
+      email: user.email,
+      level: user.level,
+      pathPhoto: user.pathPhoto,
+      accessToken: user.accessToken,
+      tokenType: user.tokenType,
+      expiresIn: user.expiresIn,
+      nik: user.nik,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
         'jenis_user': jenisUser,
         'email': email,
         'level': level,
-        'path_photo': pathPhoto,
+        'path_foto': pathPhoto,
         'access_token': accessToken,
         'token_type': tokenType,
         'expires_in': expiresIn,
