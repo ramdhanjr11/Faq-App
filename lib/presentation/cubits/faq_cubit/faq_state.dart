@@ -22,3 +22,17 @@ class FaqsError extends FaqState {
 
   const FaqsError({required this.message});
 }
+
+class FaqDeleteLoading extends FaqState {}
+
+class FaqDeleteSuccess extends FaqState {
+  final String message;
+
+  const FaqDeleteSuccess({required this.message});
+}
+
+class FaqDeleteError extends FaqState {
+  final String message;
+
+  const FaqDeleteError({required this.message});
+}

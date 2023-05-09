@@ -1,4 +1,3 @@
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:faq_app/domain/entities/user.dart';
@@ -28,10 +27,10 @@ class AuthCubit extends Cubit<AuthState> {
     });
   }
 
-  void logout(String tokenType, String token) async {
+  void logout(String token) async {
     emit(LogoutLoading());
 
-    final result = await _logoutUseCase.execute(tokenType, token);
+    final result = await _logoutUseCase.execute(token);
 
     result.fold((failure) {
       emit(LogoutError(message: failure.message));

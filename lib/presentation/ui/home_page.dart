@@ -26,13 +26,13 @@ class _HomePageState extends State<HomePage> with RouteAware {
     });
     super.initState();
     user = context.read<AuthCubit>().user!;
-    context.read<FaqCubit>().getFaqs(user.tokenType, user.accessToken);
+    context.read<FaqCubit>().getFaqs(user.accessToken, 1);
   }
 
   @override
   void didPopNext() {
     super.didPopNext();
-    context.read<FaqCubit>().getFaqs(user.tokenType, user.accessToken);
+    context.read<FaqCubit>().getFaqs(user.accessToken, 1);
   }
 
   _setLoadingState(bool isLoading) {
@@ -53,9 +53,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
         actions: [
           IconButton(
             onPressed: () {
-              context
-                  .read<AuthCubit>()
-                  .logout(user.tokenType, user.accessToken);
+              context.read<AuthCubit>().logout(user.accessToken);
             },
             icon: const Icon(Icons.logout_outlined),
           ),

@@ -30,6 +30,17 @@ class FaqModel extends Equatable {
     );
   }
 
+  factory FaqModel.fromEntity(Faq faq) {
+    return FaqModel(
+      id: faq.id,
+      question: faq.question,
+      answer: faq.answer,
+      publishStatus: faq.publishStatus,
+      createdAt: faq.createdAt,
+      updatedAt: faq.updatedAt,
+    );
+  }
+
   Faq toEntity() => Faq(
         id: id,
         question: question,

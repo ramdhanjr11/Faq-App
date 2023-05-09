@@ -7,7 +7,7 @@ class LogoutUseCase {
 
   const LogoutUseCase({required this.repository});
 
-  Future<Either<Failure, String>> execute(String tokenType, String token) {
-    return repository.logout(tokenType, token);
+  Future<Either<Failure, String>> execute(String token) {
+    return repository.logout(token);
   }
 }

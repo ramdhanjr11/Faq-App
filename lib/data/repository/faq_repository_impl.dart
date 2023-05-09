@@ -1,4 +1,5 @@
 import 'package:faq_app/data/datasources/faq_remote_data_source.dart';
+import 'package:faq_app/data/model/faq_model.dart';
 import 'package:faq_app/domain/entities/faq.dart';
 import 'package:faq_app/domain/entities/user.dart';
 import 'package:faq_app/common/failures.dart';
@@ -21,9 +22,9 @@ class FaqRepositoryImpl implements FaqRepository {
   }
 
   @override
-  Future<Either<Failure, String>> logout(String tokenType, String token) async {
+  Future<Either<Failure, String>> logout(String token) async {
     try {
-      final result = await remoteDataSource.logout(tokenType, token);
+      final result = await remoteDataSource.logout(token);
       return Right(result);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
@@ -31,11 +32,21 @@ class FaqRepositoryImpl implements FaqRepository {
   }
 
   @override
-  Future<Either<Failure, List<Faq>>> getFaqs(
-      String tokenType, String token) async {
+  Future<Either<Failure, List<Faq>>> getFaqs(String token, int page) async {
     try {
-      final result = await remoteDataSource.getFaqs(tokenType, token);
+      final result = await remoteDataSource.getFaqs(token, page);
       return Right(result.map((faq) => faq.toEntity()).toList());
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> deleteFaq(String token, Faq faq) async {
+    try {
+      final result =
+          await remoteDataSource.deleteFaq(token, FaqModel.fromEntity(faq));
+      return Right(result);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }
