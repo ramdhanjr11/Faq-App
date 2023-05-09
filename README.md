@@ -43,4 +43,4 @@ To trying the code of app, you can following below.
 - Type command of `flutter pub get`
 - And run the main.dart
 
-If you want to try the app, you can go to tabbar github `Actions`, and `download` the `faq-app.apk`.
+If you want to try the app, you can go to `Releases`, download `app-release.apk`.
