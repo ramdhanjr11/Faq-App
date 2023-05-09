@@ -50,3 +50,17 @@ class FaqCreateError extends FaqState {
 
   const FaqCreateError({required this.message});
 }
+
+class FaqUpdateLoading extends FaqState {}
+
+class FaqUpdateSuccess extends FaqState {
+  final String message;
+
+  const FaqUpdateSuccess({required this.message});
+}
+
+class FaqUpdateError extends FaqState {
+  final String message;
+
+  const FaqUpdateError({required this.message});
+}

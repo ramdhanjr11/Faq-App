@@ -10,4 +10,9 @@ abstract class FaqRepository {
   Future<Either<Failure, List<Faq>>> getFaqs(String token, int page);
   Future<Either<Failure, String>> deleteFaq(String token, Faq faq);
   Future<Either<Failure, String>> createFaq(String token, FormFaq formFaq);
+  Future<Either<Failure, String>> updateFaq(
+    String token,
+    FormFaq formFaq,
+    int faqId,
+  );
 }

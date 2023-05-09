@@ -167,6 +167,7 @@ class _DetailPageState extends State<DetailPage> {
             AppRoutes.formFaqRouteName,
             arguments: FormFaq(
               isEditable: true,
+              faqId: faq.id,
               question: faq.question,
               answer: faq.answer,
               publishStatus: faq.publishStatus == 0 ? false : true,

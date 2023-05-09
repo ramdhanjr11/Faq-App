@@ -3,12 +3,14 @@ import 'package:equatable/equatable.dart';
 
 class FormFaq extends Equatable {
   final bool isEditable;
+  final int? faqId;
   final String? question;
   final String? answer;
   final bool? publishStatus;
 
   const FormFaq({
     required this.isEditable,
+    this.faqId,
     this.question,
     this.answer,
     this.publishStatus,

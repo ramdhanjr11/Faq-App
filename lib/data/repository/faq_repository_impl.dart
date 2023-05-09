@@ -69,4 +69,19 @@ class FaqRepositoryImpl implements FaqRepository {
       return Left(ServerFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, String>> updateFaq(
+      String token, FormFaq formFaq, int faqId) async {
+    try {
+      final result = await remoteDataSource.updateFaq(
+        token,
+        FormFaqModel.fromEntity(formFaq),
+        faqId,
+      );
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
 }

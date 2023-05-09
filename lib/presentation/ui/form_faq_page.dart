@@ -17,6 +17,7 @@ class FormFaqPage extends StatefulWidget {
 class FormFaqPageState extends State<FormFaqPage> {
   final _formKey = GlobalKey<FormBuilderState>();
   bool _isLoading = false;
+  late FormFaq _formFaq;
 
   _setLoadingState(bool isLoading) {
     setState(() {
@@ -26,7 +27,7 @@ class FormFaqPageState extends State<FormFaqPage> {
 
   @override
   Widget build(BuildContext context) {
-    final formFaq = ModalRoute.of(context)!.settings.arguments as FormFaq;
+    _formFaq = ModalRoute.of(context)!.settings.arguments as FormFaq;
 
     return Scaffold(
       appBar: AppBar(
@@ -37,22 +38,7 @@ class FormFaqPageState extends State<FormFaqPage> {
         centerTitle: true,
       ),
       body: BlocListener<FaqCubit, FaqState>(
-        listener: (context, state) {
-          if (state is FaqCreateLoading) {
-            _setLoadingState(true);
-          }
-
-          if (state is FaqCreateError) {
-            _setLoadingState(false);
-            showSnackbar(state.message, context);
-          }
-
-          if (state is FaqCreateSuccess) {
-            _setLoadingState(false);
-            showSnackbar(state.message, context);
-            Navigator.pop(context);
-          }
-        },
+        listener: (context, state) => _listenerState(state),
         child: SingleChildScrollView(
           child: Visibility(
             visible: !_isLoading,
@@ -72,7 +58,7 @@ class FormFaqPageState extends State<FormFaqPage> {
                     FormBuilderTextField(
                       name: "pertanyaan",
                       initialValue:
-                          formFaq.isEditable ? formFaq.question : null,
+                          _formFaq.isEditable ? _formFaq.question : null,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Silahkan isi pertanyaan anda..',
@@ -94,7 +80,8 @@ class FormFaqPageState extends State<FormFaqPage> {
                     const SizedBox(height: 8),
                     FormBuilderTextField(
                       name: "jawaban",
-                      initialValue: formFaq.isEditable ? formFaq.answer : null,
+                      initialValue:
+                          _formFaq.isEditable ? _formFaq.answer : null,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         hintText: 'Silahkan isi jawaban dari pertanyaan anda',
@@ -116,7 +103,7 @@ class FormFaqPageState extends State<FormFaqPage> {
                     FormBuilderChoiceChip(
                       name: 'status_publish',
                       initialValue:
-                          formFaq.isEditable ? formFaq.publishStatus : false,
+                          _formFaq.isEditable ? _formFaq.publishStatus : false,
                       validator: FormBuilderValidators.compose([
                         FormBuilderValidators.required(),
                       ]),
@@ -150,22 +137,30 @@ class FormFaqPageState extends State<FormFaqPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          if (formFaq.isEditable) null;
-
-          if (_formKey.currentState!.saveAndValidate()) _processCreateFaq();
+          if (_formKey.currentState!.saveAndValidate()) {
+            if (_formFaq.isEditable) {
+              _processFaqForm(true);
+            } else {
+              _processFaqForm(false);
+            }
+          }
         },
         label: Row(
           children: [
-            formFaq.isEditable ? const Icon(Icons.edit) : const Icon(Icons.add),
+            _formFaq.isEditable
+                ? const Icon(Icons.edit)
+                : const Icon(Icons.add),
             const SizedBox(width: 6),
-            formFaq.isEditable ? const Text('Save FAQ') : const Text('Add FAQ'),
+            _formFaq.isEditable
+                ? const Text('Save FAQ')
+                : const Text('Add FAQ'),
           ],
         ),
       ),
     );
   }
 
-  _processCreateFaq() {
+  _processFaqForm(bool isEditable) {
     final userToken = context.read<AuthCubit>().user!.accessToken;
     final formValues = _formKey.currentState!.value;
     final createFormFaq = FormFaq(
@@ -174,6 +169,45 @@ class FormFaqPageState extends State<FormFaqPage> {
       answer: formValues['jawaban'],
       publishStatus: formValues['status_publish'],
     );
-    context.read<FaqCubit>().createFaq(userToken, createFormFaq);
+
+    if (isEditable) {
+      context
+          .read<FaqCubit>()
+          .updateFaq(userToken, createFormFaq, _formFaq.faqId!);
+    } else {
+      context.read<FaqCubit>().createFaq(userToken, createFormFaq);
+    }
+  }
+
+  _listenerState(FaqState state) {
+    if (state is FaqCreateLoading) {
+      _setLoadingState(true);
+    }
+
+    if (state is FaqCreateError) {
+      _setLoadingState(false);
+      showSnackbar(state.message, context);
+    }
+
+    if (state is FaqCreateSuccess) {
+      _setLoadingState(false);
+      showSnackbar(state.message, context);
+      Navigator.pop(context);
+    }
+
+    if (state is FaqUpdateLoading) {
+      _setLoadingState(true);
+    }
+
+    if (state is FaqUpdateError) {
+      _setLoadingState(false);
+      showSnackbar(state.message, context);
+    }
+
+    if (state is FaqUpdateSuccess) {
+      _setLoadingState(false);
+      showSnackbar(state.message, context);
+      Navigator.pop(context);
+    }
   }
 }
