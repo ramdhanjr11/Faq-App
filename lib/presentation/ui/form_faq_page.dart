@@ -1,5 +1,9 @@
 import 'package:faq_app/domain/entities/form_faq.dart';
+import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
+import 'package:faq_app/presentation/cubits/faq_cubit/faq_cubit.dart';
+import 'package:faq_app/utils/show_snackbar_util.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
@@ -12,6 +16,13 @@ class FormFaqPage extends StatefulWidget {
 
 class FormFaqPageState extends State<FormFaqPage> {
   final _formKey = GlobalKey<FormBuilderState>();
+  bool _isLoading = false;
+
+  _setLoadingState(bool isLoading) {
+    setState(() {
+      _isLoading = isLoading;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,64 +36,124 @@ class FormFaqPageState extends State<FormFaqPage> {
         ),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: FormBuilder(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Pertanyaan',
-                  style: Theme.of(context).textTheme.bodySmall,
+      body: BlocListener<FaqCubit, FaqState>(
+        listener: (context, state) {
+          if (state is FaqCreateLoading) {
+            _setLoadingState(true);
+          }
+
+          if (state is FaqCreateError) {
+            _setLoadingState(false);
+            showSnackbar(state.message, context);
+          }
+
+          if (state is FaqCreateSuccess) {
+            _setLoadingState(false);
+            showSnackbar(state.message, context);
+            Navigator.pop(context);
+          }
+        },
+        child: SingleChildScrollView(
+          child: Visibility(
+            visible: !_isLoading,
+            replacement: const LinearProgressIndicator(),
+            child: FormBuilder(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Pertanyaan',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 8),
+                    FormBuilderTextField(
+                      name: "pertanyaan",
+                      initialValue:
+                          formFaq.isEditable ? formFaq.question : null,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Silahkan isi pertanyaan anda..',
+                        prefixIcon: Icon(Icons.question_mark_outlined),
+                        prefixIconColor: Colors.grey,
+                      ),
+                      minLines: 4,
+                      maxLines: 5,
+                      style: Theme.of(context).textTheme.bodySmall,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                      ]),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Jawaban',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    const SizedBox(height: 8),
+                    FormBuilderTextField(
+                      name: "jawaban",
+                      initialValue: formFaq.isEditable ? formFaq.answer : null,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: 'Silahkan isi jawaban dari pertanyaan anda',
+                        prefixIcon: Icon(Icons.question_answer_outlined),
+                        prefixIconColor: Colors.grey,
+                      ),
+                      minLines: 4,
+                      maxLines: 5,
+                      style: Theme.of(context).textTheme.bodySmall,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                      ]),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Status publish',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    FormBuilderChoiceChip(
+                      name: 'status_publish',
+                      initialValue:
+                          formFaq.isEditable ? formFaq.publishStatus : false,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                      ]),
+                      options: const [
+                        FormBuilderChipOption(
+                          value: true,
+                          avatar: CircleAvatar(
+                            child: Icon(
+                              Icons.check,
+                              size: 10,
+                            ),
+                          ),
+                        ),
+                        FormBuilderChipOption(
+                          value: false,
+                          avatar: CircleAvatar(
+                            child: Icon(
+                              Icons.close,
+                              size: 10,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
                 ),
-                const SizedBox(height: 8),
-                FormBuilderTextField(
-                  name: "pertanyaan",
-                  initialValue: formFaq.isEditable ? formFaq.question : null,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Silahkan isi pertanyaan anda..',
-                    prefixIcon: Icon(Icons.question_mark_outlined),
-                    prefixIconColor: Colors.grey,
-                  ),
-                  minLines: 4,
-                  maxLines: 5,
-                  style: Theme.of(context).textTheme.bodySmall,
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                  ]),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Jawaban',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 8),
-                FormBuilderTextField(
-                  name: "jawaban",
-                  initialValue: formFaq.isEditable ? formFaq.answer : null,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'Silahkan isi jawaban dari pertanyaan anda',
-                    prefixIcon: Icon(Icons.question_answer_outlined),
-                    prefixIconColor: Colors.grey,
-                  ),
-                  minLines: 4,
-                  maxLines: 5,
-                  style: Theme.of(context).textTheme.bodySmall,
-                  validator: FormBuilderValidators.compose([
-                    FormBuilderValidators.required(),
-                  ]),
-                ),
-              ],
+              ),
             ),
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          if (formFaq.isEditable) null;
+
+          if (_formKey.currentState!.saveAndValidate()) _processCreateFaq();
+        },
         label: Row(
           children: [
             formFaq.isEditable ? const Icon(Icons.edit) : const Icon(Icons.add),
@@ -92,5 +163,17 @@ class FormFaqPageState extends State<FormFaqPage> {
         ),
       ),
     );
+  }
+
+  _processCreateFaq() {
+    final userToken = context.read<AuthCubit>().user!.accessToken;
+    final formValues = _formKey.currentState!.value;
+    final createFormFaq = FormFaq(
+      isEditable: false,
+      question: formValues['pertanyaan'],
+      answer: formValues['jawaban'],
+      publishStatus: formValues['status_publish'],
+    );
+    context.read<FaqCubit>().createFaq(userToken, createFormFaq);
   }
 }

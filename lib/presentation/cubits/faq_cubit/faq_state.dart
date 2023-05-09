@@ -36,3 +36,17 @@ class FaqDeleteError extends FaqState {
 
   const FaqDeleteError({required this.message});
 }
+
+class FaqCreateLoading extends FaqState {}
+
+class FaqCreateSuccess extends FaqState {
+  final String message;
+
+  const FaqCreateSuccess({required this.message});
+}
+
+class FaqCreateError extends FaqState {
+  final String message;
+
+  const FaqCreateError({required this.message});
+}

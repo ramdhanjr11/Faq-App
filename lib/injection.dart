@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:faq_app/data/datasources/faq_remote_data_source.dart';
 import 'package:faq_app/data/repository/faq_repository_impl.dart';
 import 'package:faq_app/domain/repositories/faq_repository.dart';
+import 'package:faq_app/domain/usecases/create_faq_usecase.dart';
 import 'package:faq_app/domain/usecases/delete_faq_usecase.dart';
 import 'package:faq_app/domain/usecases/get_faqs_usecase.dart';
 import 'package:faq_app/domain/usecases/login_usecase.dart';
@@ -52,6 +53,12 @@ void init() {
     ),
   );
 
+  locator.registerLazySingleton(
+    () => CreateFaqUseCase(
+      repository: locator(),
+    ),
+  );
+
   // cubits
   locator.registerFactory(
     () => AuthCubit(
@@ -62,6 +69,7 @@ void init() {
 
   locator.registerFactory(
     () => FaqCubit(
+      locator(),
       locator(),
       locator(),
     ),

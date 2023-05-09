@@ -14,7 +14,7 @@ class FaqResponse extends Equatable {
     this.faq,
   });
 
-  factory FaqResponse.fromJsonDelete(Map<String, dynamic> json) {
+  factory FaqResponse.fromJson(Map<String, dynamic> json) {
     return FaqResponse(code: json['code'], message: json['message']);
   }
 

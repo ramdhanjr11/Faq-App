@@ -41,28 +41,38 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: FormBuilder(
-            key: _formKey,
-            autovalidateMode: AutovalidateMode.disabled,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 16),
-                Text(
+        child: FormBuilder(
+          key: _formKey,
+          autovalidateMode: AutovalidateMode.disabled,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (_isLoading) const LinearProgressIndicator(),
+              const SizedBox(height: 16),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
+                child: Text(
                   'Welcome to FAQ App',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                const SizedBox(height: 4),
-                const Text('Please login with your account..'),
-                const SizedBox(height: 64),
-                Text(
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Text('Please login with your account..'),
+              ),
+              const SizedBox(height: 64),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: Text(
                   'Email',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
-                const SizedBox(height: 8),
-                FormBuilderTextField(
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: FormBuilderTextField(
                   name: "email",
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
@@ -75,13 +85,19 @@ class _LoginPageState extends State<LoginPage> {
                     FormBuilderValidators.email(),
                   ]),
                 ),
-                const SizedBox(height: 16),
-                Text(
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                child: Text(
                   'Password',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
-                const SizedBox(height: 8),
-                FormBuilderTextField(
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: FormBuilderTextField(
                   name: 'password',
                   obscureText: _isVisible,
                   decoration: InputDecoration(
@@ -105,43 +121,40 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ]),
                 ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.saveAndValidate()) {
-                        _processLogin(_formKey.currentState!.value);
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.saveAndValidate()) {
+                      _processLogin(_formKey.currentState!.value);
+                    }
+                  },
+                  child: BlocListener<AuthCubit, AuthState>(
+                    listener: (context, state) {
+                      if (state is LoginLoading) {
+                        _setLoadingState(true);
+                      }
+                      if (state is LoginError) {
+                        _setLoadingState(false);
+                        showSnackbar(state.message, context);
+                      }
+                      if (state is LoginSuccess) {
+                        _setLoadingState(false);
+                        showSnackbar('Login Successfuly', context);
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.homeRouteName,
+                        );
                       }
                     },
-                    child: BlocListener<AuthCubit, AuthState>(
-                      listener: (context, state) {
-                        if (state is LoginLoading) {
-                          _setLoadingState(true);
-                        }
-                        if (state is LoginError) {
-                          _setLoadingState(false);
-                          showSnackbar(state.message, context);
-                        }
-                        if (state is LoginSuccess) {
-                          _setLoadingState(false);
-                          showSnackbar('Login Successfuly', context);
-                          Navigator.pushReplacementNamed(
-                            context,
-                            AppRoutes.homeRouteName,
-                          );
-                        }
-                      },
-                      child: Visibility(
-                        visible: _isLoading,
-                        replacement: const Text('Login'),
-                        child: const CircularProgressIndicator(),
-                      ),
-                    ),
+                    child: const Text('Login'),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

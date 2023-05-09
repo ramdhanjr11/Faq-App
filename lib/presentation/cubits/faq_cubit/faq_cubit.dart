@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:faq_app/domain/entities/faq.dart';
+import 'package:faq_app/domain/entities/form_faq.dart';
+import 'package:faq_app/domain/usecases/create_faq_usecase.dart';
 import 'package:faq_app/domain/usecases/delete_faq_usecase.dart';
 import 'package:faq_app/domain/usecases/get_faqs_usecase.dart';
 
@@ -9,10 +11,15 @@ part 'faq_state.dart';
 class FaqCubit extends Cubit<FaqState> {
   final GetFaqsUseCase _getFaqsUseCase;
   final DeleteFaqUseCase _deleteFaqUseCase;
+  final CreateFaqUseCase _createFaqUseCase;
   final List<Faq> _faqs = [];
   List<Faq> get faqs => _faqs;
 
-  FaqCubit(this._getFaqsUseCase, this._deleteFaqUseCase) : super(FaqInitial());
+  FaqCubit(
+    this._getFaqsUseCase,
+    this._deleteFaqUseCase,
+    this._createFaqUseCase,
+  ) : super(FaqInitial());
 
   void getFaqs(String token, int page) async {
     emit(FaqsLoading());
@@ -37,6 +44,18 @@ class FaqCubit extends Cubit<FaqState> {
       emit(FaqDeleteError(message: failure.message));
     }, (successMessage) {
       emit(FaqDeleteSuccess(message: successMessage));
+    });
+  }
+
+  void createFaq(String token, FormFaq formFaq) async {
+    emit(FaqCreateLoading());
+
+    final result = await _createFaqUseCase.execute(token, formFaq);
+
+    result.fold((failure) {
+      emit(FaqCreateError(message: failure.message));
+    }, (successMessage) {
+      emit(FaqCreateSuccess(message: successMessage));
     });
   }
 }

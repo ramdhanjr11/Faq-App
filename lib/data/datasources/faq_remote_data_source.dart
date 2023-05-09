@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:faq_app/common/exceptions.dart';
 import 'package:faq_app/data/model/faq_model.dart';
+import 'package:faq_app/data/model/form_faq_model.dart';
 import 'package:faq_app/data/model/response_model/faq_response.dart';
 import 'package:faq_app/data/model/response_model/faqs_response.dart';
 import 'package:faq_app/data/model/response_model/login_response.dart';
@@ -12,6 +15,7 @@ abstract class FaqRemoteDataSource {
   Future<String> logout(String token);
   Future<List<FaqModel>> getFaqs(String token, int page);
   Future<String> deleteFaq(String token, FaqModel faq);
+  Future<String> createFaq(String token, FormFaqModel formFaqModel);
 }
 
 class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
@@ -90,7 +94,29 @@ class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
 
     if (response.statusCode == 200) {
       final result = response.data;
-      return FaqResponse.fromJsonDelete(result).message;
+      return FaqResponse.fromJson(result).message;
+    } else {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<String> createFaq(String token, FormFaqModel formFaqModel) async {
+    final response = await dio.post(
+      '$baseUrl/api/v1/superadmin/faq',
+      options: Options(
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      ),
+      data: formFaqModel.toJson(),
+    );
+
+    if (response.statusCode == 200) {
+      final result = response.data;
+      log('Sukses menambahkan');
+      return FaqResponse.fromJson(result).message;
     } else {
       throw ServerException();
     }

@@ -5,7 +5,7 @@ class FormFaq extends Equatable {
   final bool isEditable;
   final String? question;
   final String? answer;
-  final int? publishStatus;
+  final bool? publishStatus;
 
   const FormFaq({
     required this.isEditable,

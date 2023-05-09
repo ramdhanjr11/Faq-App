@@ -1,6 +1,8 @@
 import 'package:faq_app/data/datasources/faq_remote_data_source.dart';
 import 'package:faq_app/data/model/faq_model.dart';
+import 'package:faq_app/data/model/form_faq_model.dart';
 import 'package:faq_app/domain/entities/faq.dart';
+import 'package:faq_app/domain/entities/form_faq.dart';
 import 'package:faq_app/domain/entities/user.dart';
 import 'package:faq_app/common/failures.dart';
 import 'package:dartz/dartz.dart';
@@ -46,6 +48,22 @@ class FaqRepositoryImpl implements FaqRepository {
     try {
       final result =
           await remoteDataSource.deleteFaq(token, FaqModel.fromEntity(faq));
+      return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> createFaq(
+    String token,
+    FormFaq formFaq,
+  ) async {
+    try {
+      final result = await remoteDataSource.createFaq(
+        token,
+        FormFaqModel.fromEntity(formFaq),
+      );
       return Right(result);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));

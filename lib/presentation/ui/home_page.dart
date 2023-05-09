@@ -79,17 +79,13 @@ class _HomePageState extends State<HomePage> with RouteAware {
         },
         builder: (context, state) {
           if (_isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const LinearProgressIndicator();
           }
 
           return BlocBuilder<FaqCubit, FaqState>(
             builder: (context, state) {
               if (state is FaqsLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const LinearProgressIndicator();
               }
 
               if (state is FaqsError) {
