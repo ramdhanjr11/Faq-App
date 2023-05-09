@@ -1,4 +1,6 @@
+import 'package:faq_app/common/routes.dart';
 import 'package:faq_app/domain/entities/faq.dart';
+import 'package:faq_app/domain/entities/form_faq.dart';
 import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:faq_app/presentation/cubits/faq_cubit/faq_cubit.dart';
 import 'package:faq_app/utils/show_snackbar_util.dart';
@@ -159,7 +161,18 @@ class _DetailPageState extends State<DetailPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(
+            context,
+            AppRoutes.formFaqRouteName,
+            arguments: FormFaq(
+              isEditable: true,
+              question: faq.question,
+              answer: faq.answer,
+              publishStatus: faq.publishStatus,
+            ),
+          );
+        },
         label: Row(
           children: const [
             Icon(Icons.edit),

@@ -1,9 +1,6 @@
 import 'package:faq_app/common/routes.dart';
 import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:faq_app/presentation/cubits/faq_cubit/faq_cubit.dart';
-import 'package:faq_app/presentation/ui/detail_page.dart';
-import 'package:faq_app/presentation/ui/home_page.dart';
-import 'package:faq_app/presentation/ui/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'injection.dart' as di;
@@ -37,11 +34,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: AppRoutes.loginRouteName,
         navigatorObservers: [AppRoutes.routeObserver],
-        routes: {
-          AppRoutes.loginRouteName: (context) => const LoginPage(),
-          AppRoutes.homeRouteName: (context) => const HomePage(),
-          AppRoutes.detailRouteName: (context) => const DetailPage(),
-        },
+        routes: AppRoutes.routes,
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:faq_app/common/routes.dart';
 import 'package:faq_app/domain/entities/faq.dart';
+import 'package:faq_app/domain/entities/form_faq.dart';
 import 'package:faq_app/domain/entities/user.dart';
 import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:faq_app/presentation/cubits/faq_cubit/faq_cubit.dart';
@@ -109,7 +110,11 @@ class _HomePageState extends State<HomePage> with RouteAware {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          showSnackbar('Coming soon feature', context);
+          Navigator.pushNamed(
+            context,
+            AppRoutes.formFaqRouteName,
+            arguments: const FormFaq(isEditable: false),
+          );
         },
         label: Row(
           children: const [
