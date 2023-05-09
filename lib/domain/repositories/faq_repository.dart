@@ -15,4 +15,5 @@ abstract class FaqRepository {
     FormFaq formFaq,
     int faqId,
   );
+  Future<Either<Failure, Faq>> getFaq(String token, int faqId);
 }

@@ -18,7 +18,7 @@ class FaqResponse extends Equatable {
     return FaqResponse(code: json['code'], message: json['message']);
   }
 
-  factory FaqResponse.fromJsonUpdate(Map<String, dynamic> json) {
+  factory FaqResponse.fromJsonGetFaq(Map<String, dynamic> json) {
     return FaqResponse(
       code: json['code'],
       message: json['message'],

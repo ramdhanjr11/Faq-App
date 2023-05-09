@@ -15,6 +15,7 @@ abstract class FaqRemoteDataSource {
   Future<String> deleteFaq(String token, FaqModel faq);
   Future<String> createFaq(String token, FormFaqModel formFaqModel);
   Future<String> updateFaq(String token, FormFaqModel formFaqModel, int faqId);
+  Future<FaqModel> getFaq(String token, int faqId);
 }
 
 class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
@@ -140,6 +141,26 @@ class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
     if (response.statusCode == 200) {
       final result = response.data;
       return FaqResponse.fromJson(result).message;
+    } else {
+      throw ServerException();
+    }
+  }
+
+  @override
+  Future<FaqModel> getFaq(String token, int faqId) async {
+    final response = await dio.get(
+      '$baseUrl/api/v1/superadmin/faq/$faqId',
+      options: Options(
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      final result = response.data;
+      return FaqResponse.fromJsonGetFaq(result).faq!;
     } else {
       throw ServerException();
     }

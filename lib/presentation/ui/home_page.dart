@@ -4,6 +4,8 @@ import 'package:faq_app/domain/entities/form_faq.dart';
 import 'package:faq_app/domain/entities/user.dart';
 import 'package:faq_app/presentation/cubits/auth_cubit/auth_cubit.dart';
 import 'package:faq_app/presentation/cubits/faq_cubit/faq_cubit.dart';
+import 'package:faq_app/presentation/ui/detail_page.dart';
+import 'package:faq_app/utils/detail_arguments.dart';
 import 'package:faq_app/utils/show_snackbar_util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -143,10 +145,13 @@ class _HomePageState extends State<HomePage> with RouteAware {
               ),
               contentPadding: const EdgeInsets.all(8),
               onTap: () {
-                Navigator.pushNamed(
+                Navigator.push(
                   context,
-                  AppRoutes.detailRouteName,
-                  arguments: faq,
+                  MaterialPageRoute(
+                    builder: (context) => DetailPage(
+                      detailArguments: DetailArguments(user: user, faq: faq),
+                    ),
+                  ),
                 );
               },
             ),

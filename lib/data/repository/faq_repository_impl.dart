@@ -61,9 +61,7 @@ class FaqRepositoryImpl implements FaqRepository {
   ) async {
     try {
       final result = await remoteDataSource.createFaq(
-        token,
-        FormFaqModel.fromEntity(formFaq),
-      );
+          token, FormFaqModel.fromEntity(formFaq));
       return Right(result);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
@@ -80,6 +78,16 @@ class FaqRepositoryImpl implements FaqRepository {
         faqId,
       );
       return Right(result);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Faq>> getFaq(String token, int faqId) async {
+    try {
+      final result = await remoteDataSource.getFaq(token, faqId);
+      return Right(result.toEntity());
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

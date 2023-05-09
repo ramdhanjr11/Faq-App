@@ -23,6 +23,20 @@ class FaqsError extends FaqState {
   const FaqsError({required this.message});
 }
 
+class FaqLoading extends FaqState {}
+
+class FaqSuccess extends FaqState {
+  final Faq faq;
+
+  const FaqSuccess({required this.faq});
+}
+
+class FaqError extends FaqState {
+  final String message;
+
+  const FaqError({required this.message});
+}
+
 class FaqDeleteLoading extends FaqState {}
 
 class FaqDeleteSuccess extends FaqState {
