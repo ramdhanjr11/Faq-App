@@ -18,6 +18,15 @@ abstract class FaqRemoteDataSource {
   Future<FaqModel> getFaq(String token, int faqId);
 }
 
+Options options(String token) {
+  return Options(
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $token",
+    },
+  );
+}
+
 class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
   final Dio dio;
   final baseUrl = 'https://be.lms-staging.madrasahkemenag.com';
@@ -45,12 +54,7 @@ class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
   Future<String> logout(String token) async {
     final response = await dio.post(
       '$baseUrl/api/v1/logout',
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-      ),
+      options: options(token),
     );
 
     if (response.statusCode == 200) {
@@ -64,13 +68,7 @@ class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
   @override
   Future<List<FaqModel>> getFaqs(String token, int page) async {
     final response = await dio.get('$baseUrl/api/v1/superadmin/faq',
-        options: Options(
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer $token",
-          },
-        ),
-        queryParameters: {'page': page});
+        options: options(token), queryParameters: {'page': page});
 
     if (response.statusCode == 200) {
       final result = response.data;
@@ -84,12 +82,7 @@ class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
   Future<String> deleteFaq(String token, FaqModel faq) async {
     final response = await dio.delete(
       '$baseUrl/api/v1/superadmin/faq/${faq.id}',
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-      ),
+      options: options(token),
     );
 
     if (response.statusCode == 200) {
@@ -104,12 +97,7 @@ class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
   Future<String> createFaq(String token, FormFaqModel formFaqModel) async {
     final response = await dio.post(
       '$baseUrl/api/v1/superadmin/faq',
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-      ),
+      options: options(token),
       data: formFaqModel.toJson(),
     );
 
@@ -129,12 +117,7 @@ class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
   ) async {
     final response = await dio.post(
       '$baseUrl/api/v1/superadmin/faq/$faqId',
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-      ),
+      options: options(token),
       data: formFaqModel.toJson(),
     );
 
@@ -150,12 +133,7 @@ class FaqRemoteDataSourceImpl implements FaqRemoteDataSource {
   Future<FaqModel> getFaq(String token, int faqId) async {
     final response = await dio.get(
       '$baseUrl/api/v1/superadmin/faq/$faqId',
-      options: Options(
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-      ),
+      options: options(token),
     );
 
     if (response.statusCode == 200) {
